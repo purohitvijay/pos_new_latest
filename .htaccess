@@ -1,0 +1,45 @@
+#Deny from all
+
+<IfModule mod_rewrite.c>
+
+
+    RewriteEngine On
+    #RewriteBase /
+
+    #'system' can be replaced if you have renamed your system folder.
+   #RewriteCond %{REQUEST_URI} ^system.*
+#    RewriteRule ^([a-zA-Z0-9_-]+)$ /$1/index.php/$1 [L]
+   #RewriteRule ^(.*)$ index.php/$1 [L]
+
+RewriteCond %{REQUEST_URI} ^/system.*
+#RewriteRule ^(.*)$ index.php?/$1 [L]
+RewriteRule ^(.+)$ index.php?/$1 [L]
+
+
+    #Checks to see if the user is attempting to access a valid file,
+    #such as an image or css document, if this isn't true it sends the
+    #request to index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    #This last condition enables access to the images and css folders, and the robots.txt file
+   RewriteCond $1 !^(index\.php|(.*)\.swf|images|test|robots\.txt|css|docs|cache)
+    RewriteRule ^(.*)$ index.php?/$1 [L]
+
+
+    </IfModule>
+
+<IfModule !mod_rewrite.c>
+    # If we don't have mod_rewrite installed, all 404's
+    # can be sent to index.php, and everything works as normal.
+    ErrorDocument 404 /application/errors/404.php
+</IfModule>
+
+<IfModule mod_php5.c>
+   php_value upload_max_filesize 40M
+   php_value post_max_size 40M
+</IfModule>
+
+
+Order Deny,Allow
+Deny from 54.85.182.120
